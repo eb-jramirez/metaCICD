@@ -1,20 +1,51 @@
-name: CI/CD Matrix Deploy
+#name: CI/CD Matrix Deploy
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  deploy:
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        environment: [dev, qat, stg, prd]
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Deploy ${{ matrix.environment }}
+#        run: dotnet run --project metaCICD/metaCICD.csproj ${{ matrix.environment }}
+
+name: CI/CD Matrix Deployment
 
 on:
   push:
-    branches:
-      - main
+    branches: main
+  pull_request:
+    branches: main
 
 jobs:
   deploy:
+    name: Deploy Service
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        environment: [dev, qat, stg, prd]
+        env: [dev, qat, stg, prd]
+        cluster: [apollo-jupiter-tango]
+        service: [common-ers-jobposting-processing]
+        user: [tango-admin-DEV, tango-admin-QAT, tango-admin-STG, tango-admin-PRD]
+        kafka: [common-services/atlas-kafka/atlas-pre/lavender, common-services/atlas-kafka/atlas-pre/lavender, common-services/atlas-kafka/atlas-prd/hippocrates, common-services/atlas-kafka/atlas-prd/hippocrates]
+        group: [cs-job-posting-dev-lavender, cs-job-posting-qat-lavender, cs-job-posting-stg-hippocrates, cs-job-posting-prd-hippocrates]
+        k_cluster: [lavender, lavender, hippocrates, hippocrates]
+        opensearch: [atlas/opensearch/ers-public/dev/masteruser, atlas/opensearch/ers-public/qat/masteruser, atlas/opensearch/ers-public/stg/masteruser, atlas/opensearch/ers-public/prd/masteruser]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Deploy ${{ matrix.environment }}
-        run: dotnet run --project metaCICD/metaCICD.csproj ${{ matrix.environment }}
+      - name: Deploy Service
+        run: dotnet run ${{ matrix.env }} ${{ matrix.cluster }} ${{ matrix.service }} ${{ matrix.user }} ${{ matrix.kafka }} ${{ matrix.group }} ${{ matrix.k_cluster }} ${{ matrix.opensearch }}
