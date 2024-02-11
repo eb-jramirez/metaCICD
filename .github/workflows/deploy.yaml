@@ -1,24 +1,3 @@
-#name: CI/CD Matrix Deploy
-#
-#on:
-#  push:
-#    branches:
-#      - main
-#
-#jobs:
-#  deploy:
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        environment: [dev, qat, stg, prd]
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Deploy ${{ matrix.environment }}
-#        run: dotnet run --project metaCICD/metaCICD.csproj ${{ matrix.environment }}
-
 name: CI/CD Matrix Deployment
 
 on:
@@ -42,12 +21,11 @@ jobs:
     needs: [deploy-container]
 
     strategy:
-      max-parallel: 0
+      max-parallel: 1
       fail-fast: true
       matrix:
-        env: [dev,qat,stg,prd]
-        include:
-          - env: dev
+        env:
+          - name: dev
             cluster: dev-cluster
             service: jobposting-processing
             user: admin-DEV
@@ -55,7 +33,7 @@ jobs:
             group: job-posting-dev
             k_cluster: chamomile
             opensearch: opensearch/public/dev/masteruser
-          - env: qat
+          - name: qat
             cluster: qat-cluster
             service: jobposting-processing
             user: admin-QAT
@@ -63,7 +41,7 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
-          - env: stg
+          - name: stg
             cluster: stg-cluster
             service: jobposting-processing
             user: admin-STG
@@ -71,7 +49,7 @@ jobs:
             group: job-posting-stg
             k_cluster: hippos
             opensearch: opensearch/public/stg/masteruser
-          - env: prd
+          - name: prd
             cluster: prd-cluster
             service: jobposting-processing
             user: admin-PRD
@@ -87,4 +65,10 @@ jobs:
       - name: Deploy Service
         run: |
           echo "Deploying service for environment ${{ matrix.env }}..."
+          echo "Cluster: ${{ matrix.cluster }}"
+          echo "User: ${{ matrix.user }}"
+          echo "Kafka: ${{ matrix.kafka }}"
+          echo "Group: ${{ matrix.group }}"
+          echo "K Cluster: ${{ matrix.k_cluster }}"
+          echo "Opensearch: ${{ matrix.opensearch }}"
           # Add your deployment script here
