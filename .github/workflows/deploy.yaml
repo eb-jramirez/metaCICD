@@ -48,37 +48,37 @@ jobs:
         env: [dev,qat,stg,prd]
         include:
           - env: dev
-            cluster: apollo-jupiter-tango
-            service: common-ers-jobposting-processing
-            user: tango-admin-DEV
-            kafka: common-services/atlas-kafka/atlas-pre/lavender
-            group: cs-job-posting-dev-lavender
-            k_cluster: lavender
-            opensearch: atlas/opensearch/ers-public/dev/masteruser
+            cluster: dev-cluster
+            service: jobposting-processing
+            user: admin-DEV
+            kafka: kafka/dev/path
+            group: job-posting-dev
+            k_cluster: chamomile
+            opensearch: opensearch/public/dev/masteruser
           - env: qat
-            cluster: apollo-jupiter-tango
-            service: common-ers-jobposting-processing
-            user: tango-admin-QAT
-            kafka: common-services/atlas-kafka/atlas-pre/lavender
-            group: cs-job-posting-qat-lavender
-            k_cluster: lavender
-            opensearch: atlas/opensearch/ers-public/qat/masteruser
+            cluster: qat-cluster
+            service: jobposting-processing
+            user: admin-QAT
+            kafka: kafka/qat/path
+            group: job-posting-qat
+            k_cluster: chamomile
+            opensearch: opensearch/public/qat/masteruser
           - env: stg
-            cluster: apollo-jupiter-tango
-            service: common-ers-jobposting-processing
-            user: tango-admin-STG
-            kafka: common-services/atlas-kafka/atlas-prd/hippocrates
-            group: cs-job-posting-stg-hippocrates
-            k_cluster: hippocrates
-            opensearch: atlas/opensearch/ers-public/stg/masteruser
+            cluster: stg-cluster
+            service: jobposting-processing
+            user: admin-STG
+            kafka: kafka/stg/path
+            group: job-posting-stg
+            k_cluster: hippos
+            opensearch: opensearch/public/stg/masteruser
           - env: prd
-            cluster: apollo-jupiter-tango
-            service: common-ers-jobposting-processing
-            user: tango-admin-PRD
-            kafka: common-services/atlas-kafka/atlas-prd/hippocrates
-            group: cs-job-posting-prd-hippocrates
-            k_cluster: hippocrates
-            opensearch: atlas/opensearch/ers-public/prd/masteruser
+            cluster: prd-cluster
+            service: jobposting-processing
+            user: admin-PRD
+            kafka: kafka/prd/path
+            group: job-posting-prd
+            k_cluster: hippos
+            opensearch: opensearch/public/prd/masteruser
 
     steps:
       - name: Checkout code
