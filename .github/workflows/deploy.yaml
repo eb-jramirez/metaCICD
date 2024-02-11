@@ -1,0 +1,20 @@
+name: CI/CD Matrix Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, qat, stg, prd]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy ${{ matrix.environment }}
+        run: dotnet run --project CiCdDemo/CiCdDemo.csproj ${{ matrix.environment }}
