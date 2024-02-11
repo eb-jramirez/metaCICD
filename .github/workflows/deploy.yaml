@@ -29,23 +29,54 @@ on:
 
 jobs:
   deploy:
-    name: Deploy Service
-    runs-on: ubuntu-latest
+    name: Deploy Services
+    runs-on: self-hosted
+    needs: [deploy-container]
 
     strategy:
+      max-parallel: 0
+      fail-fast: true
       matrix:
-        env: [dev, qat, stg, prd]
-        cluster: [apollo-jupiter-tango]
-        service: [common-ers-jobposting-processing]
-        user: [tango-admin-DEV, tango-admin-QAT, tango-admin-STG, tango-admin-PRD]
-        kafka: [common-services/atlas-kafka/atlas-pre/lavender, common-services/atlas-kafka/atlas-pre/lavender, common-services/atlas-kafka/atlas-prd/hippocrates, common-services/atlas-kafka/atlas-prd/hippocrates]
-        group: [cs-job-posting-dev-lavender, cs-job-posting-qat-lavender, cs-job-posting-stg-hippocrates, cs-job-posting-prd-hippocrates]
-        k_cluster: [lavender, lavender, hippocrates, hippocrates]
-        opensearch: [atlas/opensearch/ers-public/dev/masteruser, atlas/opensearch/ers-public/qat/masteruser, atlas/opensearch/ers-public/stg/masteruser, atlas/opensearch/ers-public/prd/masteruser]
+        env: [dev,qat,stg,prd]
+        include:
+          - env: dev
+            cluster: apollo-jupiter-tango
+            service: common-ers-jobposting-processing
+            user: tango-admin-DEV
+            kafka: common-services/atlas-kafka/atlas-pre/lavender
+            group: cs-job-posting-dev-lavender
+            k_cluster: lavender
+            opensearch: atlas/opensearch/ers-public/dev/masteruser
+          - env: qat
+            cluster: apollo-jupiter-tango
+            service: common-ers-jobposting-processing
+            user: tango-admin-QAT
+            kafka: common-services/atlas-kafka/atlas-pre/lavender
+            group: cs-job-posting-qat-lavender
+            k_cluster: lavender
+            opensearch: atlas/opensearch/ers-public/qat/masteruser
+          - env: stg
+            cluster: apollo-jupiter-tango
+            service: common-ers-jobposting-processing
+            user: tango-admin-STG
+            kafka: common-services/atlas-kafka/atlas-prd/hippocrates
+            group: cs-job-posting-stg-hippocrates
+            k_cluster: hippocrates
+            opensearch: atlas/opensearch/ers-public/stg/masteruser
+          - env: prd
+            cluster: apollo-jupiter-tango
+            service: common-ers-jobposting-processing
+            user: tango-admin-PRD
+            kafka: common-services/atlas-kafka/atlas-prd/hippocrates
+            group: cs-job-posting-prd-hippocrates
+            k_cluster: hippocrates
+            opensearch: atlas/opensearch/ers-public/prd/masteruser
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Deploy Service
-        run: dotnet run ${{ matrix.env }} ${{ matrix.cluster }} ${{ matrix.service }} ${{ matrix.user }} ${{ matrix.kafka }} ${{ matrix.group }} ${{ matrix.k_cluster }} ${{ matrix.opensearch }}
+        run: |
+          echo "Deploying service for environment ${{ matrix.env }}..."
+          # Add your deployment script here
