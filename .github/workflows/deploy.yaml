@@ -1,3 +1,79 @@
+#name: CI/CD Matrix Deployment
+#
+#on:
+#  push:
+#    branches: main
+#  pull_request:
+#    branches: main
+#
+#jobs:
+#  deploy-container:
+#    name: Prepare Deployment Container
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#      # Add steps to prepare the deployment container
+#
+#  deploy:
+#    name: Deploy Services
+#    runs-on: ubuntu-latest
+#    needs: [deploy-container]
+#
+#    strategy:
+#      max-parallel: 1
+#      fail-fast: true
+#      matrix:
+#        env: [dev,qat,stg,prd] #remove for sequential
+#        # env: # change to env
+#        include:
+#          - env: dev
+#            cluster: dev-cluster
+#            service: jobposting-processing
+#            user: admin-DEV
+#            kafka: kafka/dev/path
+#            group: job-posting-dev
+#            k_cluster: chamomile
+#            opensearch: opensearch/public/dev/masteruser
+#          - env: qat
+#            cluster: qat-cluster
+#            service: jobposting-processing
+#            user: admin-QAT
+#            kafka: kafka/qat/path
+#            group: job-posting-qat
+#            k_cluster: chamomile
+#            opensearch: opensearch/public/qat/masteruser
+#          - env: stg
+#            cluster: stg-cluster
+#            service: jobposting-processing
+#            user: admin-STG
+#            kafka: kafka/stg/path
+#            group: job-posting-stg
+#            k_cluster: hippos
+#            opensearch: opensearch/public/stg/masteruser
+#          - env: prd
+#            cluster: prd-cluster
+#            service: jobposting-processing
+#            user: admin-PRD
+#            kafka: kafka/prd/path
+#            group: job-posting-prd
+#            k_cluster: hippos
+#            opensearch: opensearch/public/prd/masteruser
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#
+#      - name: Deploy Service
+#        run: |
+#          echo "Deploying service for environment ${{ matrix.env }}..."
+#          echo "Cluster: ${{ matrix.cluster }}"
+#          echo "User: ${{ matrix.user }}"
+#          echo "Kafka: ${{ matrix.kafka }}"
+#          echo "Group: ${{ matrix.group }}"
+#          echo "K Cluster: ${{ matrix.k_cluster }}"
+#          echo "Opensearch: ${{ matrix.opensearch }}"
+
 name: CI/CD Matrix Deployment
 
 on:
@@ -24,10 +100,8 @@ jobs:
       max-parallel: 1
       fail-fast: true
       matrix:
-        env: [dev,qat,stg,prd] #remove for sequential
-        # env: # change to env
-        include:
-          - env: dev
+        env:
+          - name: dev
             cluster: dev-cluster
             service: jobposting-processing
             user: admin-DEV
@@ -35,7 +109,8 @@ jobs:
             group: job-posting-dev
             k_cluster: chamomile
             opensearch: opensearch/public/dev/masteruser
-          - env: qat
+            sequence: 1
+          - name: qat
             cluster: qat-cluster
             service: jobposting-processing
             user: admin-QAT
@@ -43,7 +118,8 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
-          - env: stg
+            sequence: 1
+          - name: stg
             cluster: stg-cluster
             service: jobposting-processing
             user: admin-STG
@@ -51,7 +127,8 @@ jobs:
             group: job-posting-stg
             k_cluster: hippos
             opensearch: opensearch/public/stg/masteruser
-          - env: prd
+            sequence: 2
+          - name: prd
             cluster: prd-cluster
             service: jobposting-processing
             user: admin-PRD
@@ -59,6 +136,7 @@ jobs:
             group: job-posting-prd
             k_cluster: hippos
             opensearch: opensearch/public/prd/masteruser
+            sequence: 3
 
     steps:
       - name: Checkout code
@@ -66,7 +144,7 @@ jobs:
 
       - name: Deploy Service
         run: |
-          echo "Deploying service for environment ${{ matrix.env }}..."
+          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ matrix.sequence }}..."
           echo "Cluster: ${{ matrix.cluster }}"
           echo "User: ${{ matrix.user }}"
           echo "Kafka: ${{ matrix.kafka }}"
