@@ -24,9 +24,10 @@ jobs:
       max-parallel: 1
       fail-fast: true
       matrix:
-        #env: [dev,qat,stg,prd] #remove for sequential
-        env: # change to env
-          - name: dev
+        env: [dev,qat,stg,prd] #remove for sequential
+        # env: # change to env
+        include:
+          - env: dev
             cluster: dev-cluster
             service: jobposting-processing
             user: admin-DEV
@@ -34,7 +35,7 @@ jobs:
             group: job-posting-dev
             k_cluster: chamomile
             opensearch: opensearch/public/dev/masteruser
-          - name: qat
+          - env: qat
             cluster: qat-cluster
             service: jobposting-processing
             user: admin-QAT
@@ -42,7 +43,7 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
-          - name: stg
+          - env: stg
             cluster: stg-cluster
             service: jobposting-processing
             user: admin-STG
@@ -50,7 +51,7 @@ jobs:
             group: job-posting-stg
             k_cluster: hippos
             opensearch: opensearch/public/stg/masteruser
-          - name: prd
+          - env: prd
             cluster: prd-cluster
             service: jobposting-processing
             user: admin-PRD
