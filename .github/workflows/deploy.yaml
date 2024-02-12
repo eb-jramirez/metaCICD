@@ -24,8 +24,8 @@ jobs:
       max-parallel: 1
       fail-fast: true
       matrix:
-        env: [dev,qat,stg,prd]
-        include:
+        #env: [dev,qat,stg,prd] #remove for sequential
+        env: # change to env
           - name: dev
             cluster: dev-cluster
             service: jobposting-processing
