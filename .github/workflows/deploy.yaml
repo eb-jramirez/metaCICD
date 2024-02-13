@@ -109,10 +109,12 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: deployment-${{ matrix.env }}
+          path: artifacts
 
 
       - name: Get Deployment Sequences
         run: |
-          for file in deployment-${{ matrix.env }}.txt; do
+          for file in artifacts/deployment-*.txt; do
             echo "$(cat $file)"
           done
+      
