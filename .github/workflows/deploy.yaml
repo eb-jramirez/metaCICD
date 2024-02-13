@@ -113,6 +113,6 @@ jobs:
 
       - name: Get Deployment Sequences
         run: |
-          for file in deployment-*.txt; do
+          for file in deployment-${{ matrix.env }}.txt; do
             echo "$(cat $file)"
           done
