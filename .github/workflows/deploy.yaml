@@ -164,4 +164,6 @@ jobs:
 
     steps:
       - name: Get Deployment Sequence
-        run: echo "Deployment sequence: ${{ needs.deploy.outputs.deployment-sequence }}"
+        run:
+          echo "Deployment sequence: ${{ needs.deploy.outputs.deployment-sequence }}"
+    
