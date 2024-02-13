@@ -108,6 +108,8 @@ jobs:
       - name: Display Deployment Timestamps
         run: |
           for file in artifacts/deployment-*.txt; do
-            echo "Deployment for ${{ file##*- }} at $(grep 'Timestamp' $file | cut -d' ' -f2)"
+            env=$(basename $file .txt | cut -d'-' -f2-)
+            timestamp=$(grep 'Timestamp' $file | cut -d' ' -f2)
+            echo "Deployment for $env at $timestamp"
           done
           
