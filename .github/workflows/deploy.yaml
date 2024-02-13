@@ -34,7 +34,7 @@ jobs:
             group: job-posting-dev
             k_cluster: chamomile
             opensearch: opensearch/public/dev/masteruser
-            sequence: 1
+            #sequence: 1
           - name: qat
             cluster: qat-cluster
             service: jobposting-processing
@@ -43,7 +43,7 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
-            sequence: 2
+            #sequence: 1
           - name: stg
             cluster: stg-cluster
             service: jobposting-processing
@@ -52,7 +52,7 @@ jobs:
             group: job-posting-stg
             k_cluster: hippos
             opensearch: opensearch/public/stg/masteruser
-            sequence: 3
+            #sequence: 2
           - name: prd
             cluster: prd-cluster
             service: jobposting-processing
@@ -61,11 +61,16 @@ jobs:
             group: job-posting-prd
             k_cluster: hippos
             opensearch: opensearch/public/prd/masteruser
-            sequence: 4
+            #sequence: 3
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
+      - name: Check for stg environment and fail intentionally
+        if: matrix.env == 'qat'
+        run: exit 1
+
 
       - name: Deploy Service
         run: |
@@ -76,10 +81,3 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-          # Writing sequence to a file artifcact
-          echo ${{ matrix.sequence }} > sequence.txt
-
-    # Save the sequence file as an artifact
-    artifacts:
-      paths:
-        - sequence.txt
