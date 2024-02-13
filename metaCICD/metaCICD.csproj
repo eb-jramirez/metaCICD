@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="logs\" />
+      <Folder Include="logs\deployment-stg\" />
     </ItemGroup>
 
 </Project>
