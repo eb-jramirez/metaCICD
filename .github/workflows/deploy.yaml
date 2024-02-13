@@ -87,18 +87,12 @@ jobs:
       - name: Create Deployment Artifact
         run: |
           echo "Deployment sequence: ${{ matrix.env }}" > deployment-${{ matrix.env }}.txt
-          # Add more steps if needed to capture additional information
-        # Upload the artifact
-        continue-on-error: true
-        if: always()
+
+      - name: Upload Deployment Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: deployment-artifacts
-          path: |
-            deployment-stg.txt
-            deployment-dev.txt
-            deployment-qat.txt
-            deployment-prd.txt
+          name: deployment-${{ matrix.env }}
+          path: deployment-${{ matrix.env }}.txt
           
           
           #      - name: Create Deployment Artifact
@@ -111,8 +105,13 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Download Deployment Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: deployment-*
+
       - name: Get Deployment Sequences
         run: |
-          for env in stg dev qat prd; do
-            echo "Deployment sequence for $env: $(cat deployment-$env.txt)"
+          for file in deployment-*.txt; do
+            echo "$(cat $file)"
           done
