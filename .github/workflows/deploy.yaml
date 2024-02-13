@@ -100,7 +100,7 @@ jobs:
       max-parallel: 1
       fail-fast: true
       matrix:
-        env: [dev,qat,stg,prd]
+        env: [prd,stg,dev,qat]
         include:
           - name: dev
             cluster: dev-cluster
