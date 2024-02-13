@@ -147,12 +147,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Log Deployment Sequence
-        run: |
-          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ matrix.sequence }}..."
-
       - name: Deploy Service
         run: |
+          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ matrix.sequence }}..."
           echo "Cluster: ${{ matrix.cluster }}"
           echo "User: ${{ matrix.user }}"
           echo "Kafka: ${{ matrix.kafka }}"
