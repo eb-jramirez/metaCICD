@@ -143,13 +143,31 @@ jobs:
             opensearch: opensearch/public/prd/masteruser
             sequence: 4
 
+    env:
+      DEV_SEQUENCE: ${{ matrix.dev.sequence }}
+      QAT_SEQUENCE: ${{ matrix.qat.sequence }}
+      STG_SEQUENCE: ${{ matrix.stg.sequence }}
+      PRD_SEQUENCE: ${{ matrix.prd.sequence }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set Sequence
+        run: |
+          if [ "${{ matrix.env }}" = "dev" ]; then
+            echo "DEV_SEQUENCE=${DEV_SEQUENCE}" >> $GITHUB_ENV
+          elif [ "${{ matrix.env }}" = "qat" ]; then
+            echo "QAT_SEQUENCE=${QAT_SEQUENCE}" >> $GITHUB_ENV
+          elif [ "${{ matrix.env }}" = "stg" ]; then
+            echo "STG_SEQUENCE=${STG_SEQUENCE}" >> $GITHUB_ENV
+          elif [ "${{ matrix.env }}" = "prd" ]; then
+            echo "PRD_SEQUENCE=${PRD_SEQUENCE}" >> $GITHUB_ENV
+          fi
+
       - name: Deploy Service
         run: |
-          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ matrix.sequence }}..."
+          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ env[upper(matrix.env) + '_SEQUENCE'] }}..."
           echo "Cluster: ${{ matrix.cluster }}"
           echo "User: ${{ matrix.user }}"
           echo "Kafka: ${{ matrix.kafka }}"
