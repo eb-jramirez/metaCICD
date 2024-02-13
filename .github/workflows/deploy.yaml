@@ -18,6 +18,8 @@ jobs:
     name: Deploy Services
     runs-on: ubuntu-latest
     needs: [deploy-container]
+    outputs:
+      deployment-sequence: ${{ steps.set-sequence.outputs.sequence }}
 
     strategy:
       max-parallel: 1
@@ -43,7 +45,7 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
-            #sequence: 1
+            #sequence: 2
           - name: stg
             cluster: stg-cluster
             service: jobposting-processing
@@ -67,9 +69,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Check for stg environment and fail intentionally
-        if: matrix.env == 'qat'
-        run: exit 1
+#      - name: fail-fast test
+#        if: matrix.env == 'qat'
+#        run: exit 1
 
 
       - name: Deploy Service
@@ -81,3 +83,19 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
+          
+      - name: Create Deployment Artifact
+        run: |
+          echo "Deployment sequence: ${{ matrix.env }}" > deployment-${{ matrix.env }}.txt
+          
+  process-outputs:
+    name: Process Outputs
+    needs: [ deploy ]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Get Deployment Sequences
+        run: |
+          for env in stg dev qat prd; do
+            echo "Deployment sequence for $env: $(cat deployment-$env.txt)"
+          done
