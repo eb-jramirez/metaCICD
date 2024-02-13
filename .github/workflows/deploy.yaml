@@ -81,7 +81,7 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-          echo "::set-output name=timestamp::$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "::set-output name=timestamp::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
   process-outputs:
     name: Process Outputs
