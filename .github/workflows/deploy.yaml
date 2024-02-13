@@ -95,9 +95,9 @@ jobs:
 
   process-outputs:
     name: Process Outputs
-    needs: [deploy]
+    needs: [ deploy ]
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Download Deployment Artifacts
         uses: actions/download-artifact@v2
@@ -107,9 +107,8 @@ jobs:
 
       - name: Display Deployment Timestamps
         run: |
-           for file in artifacts/deployment-*.txt; do
+          for file in artifacts/deployment-*.txt; do
             env=$(basename $file .txt)
             timestamp=$(cat $file)
             echo "Deployment for $env at $timestamp"
           done
-          
