@@ -81,17 +81,7 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-          echo "::set-output name=timestamp::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-
-      - name: Create Deployment Artifact
-        run: |
-          echo "Timestamp: ${{ steps.deploy-step.outputs.timestamp }}" > deployment-${{ matrix.env }}.txt
-
-      - name: Upload Deployment Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: deployment-${{ matrix.env }}
-          path: deployment-${{ matrix.env }}.txt
+          echo "::set-output name=timestamp::$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
   process-outputs:
     name: Process Outputs
@@ -99,16 +89,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Download Deployment Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: deployment-${{ matrix.env }}
-          path: artifacts
-
-      - name: Display Deployment Timestamps
+      - name: Get Deployment Timestamps
         run: |
-          for file in artifacts/deployment-*.txt; do
-            env=$(basename $file .txt)
-            timestamp=$(cat $file)
-            echo "Deployment for $env at $timestamp"
-          done
+          grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/**/actions/*.log | sort -n
