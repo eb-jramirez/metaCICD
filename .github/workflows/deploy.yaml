@@ -76,16 +76,3 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-
-    outputs:
-      sequence: ${{ matrix.sequence }}
-
-  process-outputs:
-    name: Process Outputs
-    needs: [ deploy ]
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Get Deployment Sequence
-        run:
-          echo "Deployment sequence: ${{ needs.deploy.outputs.deployment-sequence
