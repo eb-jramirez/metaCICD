@@ -1,81 +1,3 @@
-#name: CI/CD Matrix Deployment
-#
-#on:
-#  push:
-#    branches: main
-#  pull_request:
-#    branches: main
-#
-#jobs:
-#  deploy-container:
-#    name: Prepare Deployment Container
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#
-#  deploy:
-#    name: Deploy Services
-#    runs-on: ubuntu-latest
-#    needs: [deploy-container]
-#
-#    strategy:
-#      max-parallel: 1
-#      fail-fast: true
-#      matrix:
-#        env: [stg,dev,qat,prd]
-#        include:
-#          - name: dev
-#            cluster: dev-cluster
-#            service: jobposting-processing
-#            user: admin-DEV
-#            kafka: kafka/dev/path
-#            group: job-posting-dev
-#            k_cluster: chamomile
-#            opensearch: opensearch/public/dev/masteruser
-#            #sequence: 1
-#          - name: qat
-#            cluster: qat-cluster
-#            service: jobposting-processing
-#            user: admin-QAT
-#            kafka: kafka/qat/path
-#            group: job-posting-qat
-#            k_cluster: chamomile
-#            opensearch: opensearch/public/qat/masteruser
-#            #sequence: 1
-#          - name: stg
-#            cluster: stg-cluster
-#            service: jobposting-processing
-#            user: admin-STG
-#            kafka: kafka/stg/path
-#            group: job-posting-stg
-#            k_cluster: hippos
-#            opensearch: opensearch/public/stg/masteruser
-#            #sequence: 2
-#          - name: prd
-#            cluster: prd-cluster
-#            service: jobposting-processing
-#            user: admin-PRD
-#            kafka: kafka/prd/path
-#            group: job-posting-prd
-#            k_cluster: hippos
-#            opensearch: opensearch/public/prd/masteruser
-#            #sequence: 3
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#
-#      - name: Deploy Service
-#        run: |
-#          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ matrix.sequence }}..."
-#          echo "Cluster: ${{ matrix.cluster }}"
-#          echo "User: ${{ matrix.user }}"
-#          echo "Kafka: ${{ matrix.kafka }}"
-#          echo "Group: ${{ matrix.group }}"
-#          echo "K Cluster: ${{ matrix.k_cluster }}"
-#          echo "Opensearch: ${{ matrix.opensearch }}"
-
 name: CI/CD Matrix Deployment
 
 on:
@@ -102,6 +24,7 @@ jobs:
       fail-fast: true
       matrix:
         env: [stg,dev,qat,prd]
+        sequence: [1,2,3,4]
         include:
           - name: dev
             cluster: dev-cluster
@@ -111,7 +34,7 @@ jobs:
             group: job-posting-dev
             k_cluster: chamomile
             opensearch: opensearch/public/dev/masteruser
-            sequence: 1
+            #sequence: 1
           - name: qat
             cluster: qat-cluster
             service: jobposting-processing
@@ -120,7 +43,7 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
-            sequence: 2
+            #sequence: 1
           - name: stg
             cluster: stg-cluster
             service: jobposting-processing
@@ -129,7 +52,7 @@ jobs:
             group: job-posting-stg
             k_cluster: hippos
             opensearch: opensearch/public/stg/masteruser
-            sequence: 3
+            #sequence: 2
           - name: prd
             cluster: prd-cluster
             service: jobposting-processing
@@ -138,10 +61,7 @@ jobs:
             group: job-posting-prd
             k_cluster: hippos
             opensearch: opensearch/public/prd/masteruser
-            sequence: 4
-
-    outputs:
-      deployment-sequence: matrix.sequence
+            #sequence: 3
 
     steps:
       - name: Checkout code
@@ -159,11 +79,10 @@ jobs:
 
   process-outputs:
     name: Process Outputs
-    needs: [deploy]
+    needs: [ deploy ]
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Get Deployment Sequence
         run:
-          echo "Deployment sequence: ${{ needs.deploy.outputs.deployment-sequence }}"
-    
+          echo "Deployment sequence: ${{ needs.deploy.outputs.deployment-sequence
