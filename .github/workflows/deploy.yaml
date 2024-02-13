@@ -107,9 +107,9 @@ jobs:
 
       - name: Display Deployment Timestamps
         run: |
-          for file in artifacts/deployment-*.txt; do
-            env=$(basename $file .txt | cut -d'-' -f2-)
-            timestamp=$(grep 'Timestamp' $file | cut -d' ' -f2)
+           for file in artifacts/deployment-*.txt; do
+            env=$(basename $file .txt)
+            timestamp=$(cat $file)
             echo "Deployment for $env at $timestamp"
           done
           
