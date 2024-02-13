@@ -1,83 +1,3 @@
-#name: CI/CD Matrix Deployment
-#
-#on:
-#  push:
-#    branches: main
-#  pull_request:
-#    branches: main
-#
-#jobs:
-#  deploy-container:
-#    name: Prepare Deployment Container
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#      # Add steps to prepare the deployment container
-#
-#  deploy:
-#    name: Deploy Services
-#    runs-on: ubuntu-latest
-#    needs: [deploy-container]
-#
-#    strategy:
-#      max-parallel: 1
-#      fail-fast: true
-#      matrix:
-#        env: [stg,dev,qat,prd]
-#        include:
-#          - name: dev
-#            cluster: dev-cluster
-#            service: jobposting-processing
-#            user: admin-DEV
-#            kafka: kafka/dev/path
-#            group: job-posting-dev
-#            k_cluster: chamomile
-#            opensearch: opensearch/public/dev/masteruser
-#            #sequence: 1
-#          - name: qat
-#            cluster: qat-cluster
-#            service: jobposting-processing
-#            user: admin-QAT
-#            kafka: kafka/qat/path
-#            group: job-posting-qat
-#            k_cluster: chamomile
-#            opensearch: opensearch/public/qat/masteruser
-#            #sequence: 1
-#          - name: stg
-#            cluster: stg-cluster
-#            service: jobposting-processing
-#            user: admin-STG
-#            kafka: kafka/stg/path
-#            group: job-posting-stg
-#            k_cluster: hippos
-#            opensearch: opensearch/public/stg/masteruser
-#            #sequence: 2
-#          - name: prd
-#            cluster: prd-cluster
-#            service: jobposting-processing
-#            user: admin-PRD
-#            kafka: kafka/prd/path
-#            group: job-posting-prd
-#            k_cluster: hippos
-#            opensearch: opensearch/public/prd/masteruser
-#            #sequence: 3
-#
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#
-#      - name: Deploy Service
-#        run: |
-#          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ matrix.sequence }}..."
-#          echo "Cluster: ${{ matrix.cluster }}"
-#          echo "User: ${{ matrix.user }}"
-#          echo "Kafka: ${{ matrix.kafka }}"
-#          echo "Group: ${{ matrix.group }}"
-#          echo "K Cluster: ${{ matrix.k_cluster }}"
-#          echo "Opensearch: ${{ matrix.opensearch }}"
-#          
-
 name: CI/CD Matrix Deployment
 
 on:
@@ -93,7 +13,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      # Add steps to prepare the deployment container
 
   deploy:
     name: Deploy Services
@@ -114,7 +33,7 @@ jobs:
             group: job-posting-dev
             k_cluster: chamomile
             opensearch: opensearch/public/dev/masteruser
-            sequence: 1
+            #sequence: 1
           - name: qat
             cluster: qat-cluster
             service: jobposting-processing
@@ -123,7 +42,7 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
-            sequence: 2
+            #sequence: 1
           - name: stg
             cluster: stg-cluster
             service: jobposting-processing
@@ -132,7 +51,7 @@ jobs:
             group: job-posting-stg
             k_cluster: hippos
             opensearch: opensearch/public/stg/masteruser
-            sequence: 3
+            #sequence: 2
           - name: prd
             cluster: prd-cluster
             service: jobposting-processing
@@ -141,33 +60,15 @@ jobs:
             group: job-posting-prd
             k_cluster: hippos
             opensearch: opensearch/public/prd/masteruser
-            sequence: 4
-
-    env:
-      DEV_SEQUENCE: ${{ matrix.dev.sequence }}
-      QAT_SEQUENCE: ${{ matrix.qat.sequence }}
-      STG_SEQUENCE: ${{ matrix.stg.sequence }}
-      PRD_SEQUENCE: ${{ matrix.prd.sequence }}
+            #sequence: 3
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set Sequence
-        run: |
-          if [ "${{ matrix.env }}" = "dev" ]; then
-            echo "DEV_SEQUENCE=${DEV_SEQUENCE}" >> $GITHUB_ENV
-          elif [ "${{ matrix.env }}" = "qat" ]; then
-            echo "QAT_SEQUENCE=${QAT_SEQUENCE}" >> $GITHUB_ENV
-          elif [ "${{ matrix.env }}" = "stg" ]; then
-            echo "STG_SEQUENCE=${STG_SEQUENCE}" >> $GITHUB_ENV
-          elif [ "${{ matrix.env }}" = "prd" ]; then
-            echo "PRD_SEQUENCE=${PRD_SEQUENCE}" >> $GITHUB_ENV
-          fi
-
       - name: Deploy Service
         run: |
-          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ env[matrix.env + '_SEQUENCE'] }}..."
+          echo "Deploying service for environment ${{ matrix.env }} with sequence ${{ matrix.sequence }}..."
           echo "Cluster: ${{ matrix.cluster }}"
           echo "User: ${{ matrix.user }}"
           echo "Kafka: ${{ matrix.kafka }}"
