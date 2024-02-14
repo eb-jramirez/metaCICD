@@ -85,7 +85,12 @@ jobs:
 
       - name: Get Deployment Timestamps
         run: |
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > logs/deployment-${{ matrix.env }}.log
+          echo "Deployment timestamps:"
+          cat logs/deployment-${{ matrix.env }}.log
+
+#      - name: Get Deployment Timestamps
+#        run: |
+#          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > logs/deployment-${{ matrix.env }}.log
 
       - name: Append Timestamps to Logs
         run: |
