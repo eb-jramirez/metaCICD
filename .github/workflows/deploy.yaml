@@ -85,7 +85,7 @@ jobs:
 
       - name: Get Deployment Timestamps
         run: |
-          for env in dev qat stg prd; do
+          for env in stg dev qat prd; do
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
             
             # Introduce a delay after deploying the "dev" environment
