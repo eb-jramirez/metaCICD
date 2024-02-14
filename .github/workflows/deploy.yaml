@@ -24,39 +24,6 @@ jobs:
       fail-fast: true
       matrix:
         env: [stg, dev, qat, prd]
-        include:
-          - name: dev
-            cluster: dev-cluster
-            service: jobposting-processing
-            user: admin-DEV
-            kafka: kafka/dev/path
-            group: job-posting-dev
-            k_cluster: chamomile
-            opensearch: opensearch/public/dev/masteruser
-          - name: qat
-            cluster: qat-cluster
-            service: jobposting-processing
-            user: admin-QAT
-            kafka: kafka/qat/path
-            group: job-posting-qat
-            k_cluster: chamomile
-            opensearch: opensearch/public/qat/masteruser
-          - name: stg
-            cluster: stg-cluster
-            service: jobposting-processing
-            user: admin-STG
-            kafka: kafka/stg/path
-            group: job-posting-stg
-            k_cluster: hippos
-            opensearch: opensearch/public/stg/masteruser
-          - name: prd
-            cluster: prd-cluster
-            service: jobposting-processing
-            user: admin-PRD
-            kafka: kafka/prd/path
-            group: job-posting-prd
-            k_cluster: hippos
-            opensearch: opensearch/public/prd/masteruser
 
     steps:
       - name: Checkout code
@@ -65,20 +32,14 @@ jobs:
       - name: Deploy Service
         run: |
           echo "Deploying service for environment ${{ matrix.env }}..."
-          echo "Cluster: ${{ matrix.cluster }}"
-          echo "User: ${{ matrix.user }}"
-          echo "Kafka: ${{ matrix.kafka }}"
-          echo "Group: ${{ matrix.group }}"
-          echo "K Cluster: ${{ matrix.k_cluster }}"
-          echo "Opensearch: ${{ matrix.opensearch }}"
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-#          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+          # Run your deployment commands here
           echo "Deployment completed for environment ${{ matrix.env }} at $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+
   generate-logs:
     name: Generate Timestamp Logs
-    needs: [ deploy ]
+    needs: [deploy]
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Create Logs Directory
         run: mkdir -p logs
@@ -95,44 +56,10 @@ jobs:
 
   process-outputs:
     name: Process Outputs
-    needs: [ deploy ]
+    needs: [deploy]
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Get Deployment Timestamps
         run: |
-          grep -oP "Deployment completed for environment \w+ at \K.*" $GITHUB_WORKSPACE
-#  generate-logs:
-#    name: Generate Timestamp Logs
-#    needs: [deploy]
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Create Logs Directory
-#        run: mkdir -p logs
-#
-#      - name: Get Deployment Timestamps
-#        run: |
-#          for env in dev qat stg prd; do
-#            echo "Deployment timestamp for $env: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/deployment-$env.log
-#          done
-#          
-#      - name: Append Timestamps to Logs
-#        run: |
-#          echo "Deployment timestamp: $(date -u %Y-%m-%dT%H:%M:%S%Z)" >> logs/deployment-${{ matrix.env }}.log
-#
-#      - name: Upload Logs
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: deployment-logs
-#          path: logs
-#
-#  process-outputs:
-#    name: Process Outputs
-#    needs: [deploy]
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Get Deployment Timestamps
-#        run: |
-#          grep -oP "Deployment timestamp: \K.*" $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log | sort -n
+          grep -oP "Deployment completed for environment \w+ at \K.*" $GITHUB_WORKSPACE/all-deployment-timestamps.log | sort -n
