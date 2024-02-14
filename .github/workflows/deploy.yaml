@@ -103,12 +103,6 @@ jobs:
         run: |
           echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%S%Z)" >> logs/deployment-${{ matrix.env }}.log
 
-      - name: Upload Logs
-        uses: actions/upload-artifact@v2
-        with:
-          name: deployment-logs
-          path: logs
-
   process-outputs:
     name: Process Outputs
     needs: [deploy]
