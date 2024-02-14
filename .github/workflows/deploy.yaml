@@ -72,43 +72,67 @@ jobs:
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
           echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
-
+#          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+          echo "Deployment completed for environment ${{ matrix.env }} at $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
   generate-logs:
     name: Generate Timestamp Logs
-    needs: [deploy]
+    needs: [ deploy ]
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Create Logs Directory
         run: mkdir -p logs
 
       - name: Get Deployment Timestamps
         run: |
-          for env in dev qat stg prd; do
-            echo "Deployment timestamp for $env: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/deployment-$env.log
-          done
-
-#      - name: Get Deployment Timestamps
-#        run: |
-#          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > logs/deployment-${{ matrix.env }}.log
-
-      - name: Append Timestamps to Logs
-        run: |
-          echo "Deployment timestamp: $(date -u %Y-%m-%dT%H:%M:%S%Z)" >> logs/deployment-${{ matrix.env }}.log
+          cat $GITHUB_WORKSPACE/logs/deployment-*.log > $GITHUB_WORKSPACE/all-deployment-timestamps.log
 
       - name: Upload Logs
         uses: actions/upload-artifact@v2
         with:
           name: deployment-logs
-          path: logs
+          path: all-deployment-timestamps.log
 
   process-outputs:
     name: Process Outputs
-    needs: [deploy]
+    needs: [ deploy ]
     runs-on: ubuntu-latest
 
     steps:
       - name: Get Deployment Timestamps
         run: |
-          grep -oP "Deployment timestamp: \K.*" $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log | sort -n
+          grep -oP "Deployment completed for environment \w+ at \K.*" $GITHUB_WORKSPACE
+#  generate-logs:
+#    name: Generate Timestamp Logs
+#    needs: [deploy]
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Create Logs Directory
+#        run: mkdir -p logs
+#
+#      - name: Get Deployment Timestamps
+#        run: |
+#          for env in dev qat stg prd; do
+#            echo "Deployment timestamp for $env: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/deployment-$env.log
+#          done
+#          
+#      - name: Append Timestamps to Logs
+#        run: |
+#          echo "Deployment timestamp: $(date -u %Y-%m-%dT%H:%M:%S%Z)" >> logs/deployment-${{ matrix.env }}.log
+#
+#      - name: Upload Logs
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: deployment-logs
+#          path: logs
+#
+#  process-outputs:
+#    name: Process Outputs
+#    needs: [deploy]
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Get Deployment Timestamps
+#        run: |
+#          grep -oP "Deployment timestamp: \K.*" $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log | sort -n
