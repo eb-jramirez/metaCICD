@@ -85,8 +85,15 @@ jobs:
 
       - name: Get Deployment Timestamps
         run: |
-          echo "Deployment timestamps:"
-          cat logs/deployment-${{ matrix.env }}.log
+          for env in dev qat stg prd; do
+            log_file="logs/deployment-$env.log"
+            if [ -f "$log_file" ]; then
+              echo "Deployment timestamps for $env:"
+              cat "$log_file"
+            else
+              echo "No deployment timestamps found for $env"
+            fi
+          done
 
 #      - name: Get Deployment Timestamps
 #        run: |
