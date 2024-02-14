@@ -81,14 +81,14 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
-  
-  process-outputs:
-    name: Process Outputs
-    needs: [ deploy ]
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Get Deployment Timestamps
-        run: |
-          grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/**/actions/*.log | sort -n
+#          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+#  
+#  process-outputs:
+#    name: Process Outputs
+#    needs: [ deploy ]
+#    runs-on: ubuntu-latest
+#    
+#    steps:
+#      - name: Get Deployment Timestamps
+#        run: |
+#          grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/**/actions/*.log | sort -n
