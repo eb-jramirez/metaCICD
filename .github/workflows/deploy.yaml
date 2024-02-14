@@ -83,7 +83,26 @@ jobs:
           echo "Opensearch: ${{ matrix.opensearch }}"
           echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 #          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+  
+  generate-logs:
+    name: Generate Timestamp Logs
+    needs: [ deploy ]
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Create Logs Directory
+        run: mkdir -p logs
+
+      - name: Get Deployment Timestamps
+        run: |
+          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" > logs/deployment-${{ matrix.env }}.log
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: deployment-logs
+          path: deployment-${{ matrix.env }}.log
+  
   process-outputs:
     name: Process Outputs
     needs: [ deploy ]
@@ -98,7 +117,7 @@ jobs:
 #    name: Generate Timestamp Logs
 #    needs: [ deploy ]
 #    runs-on: ubuntu-latest
-#    
+#
 #    steps:
 #      - name: Create Logs Directory
 #        run: mkdir -p logs
