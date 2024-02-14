@@ -71,8 +71,8 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%S%Z)"
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%S%Z)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
 
   generate-logs:
     name: Generate Timestamp Logs
@@ -82,6 +82,16 @@ jobs:
     steps:
       - name: Create Logs Directory
         run: mkdir -p logs
+
+      - name: Get Deployment Timestamps
+        run: |
+          for env in dev qat stg prd; do
+            echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
+          done
+      
+      - name: Append Timestamps to Logs
+        run: |
+          echo "Deployment timestamp: $(date -u %Y-%m-%dT%H:%M:%S%Z)" >> logs/deployment-${{ matrix.env }}.log
 
       - name: Upload Logs
         uses: actions/upload-artifact@v2
