@@ -99,9 +99,10 @@ jobs:
             fi
           done
 
-      - name: Append Timestamps to Logs
+      - name: Display Timestamps in Logs
         run: |
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%S%Z)" >> logs/deployment-${{ matrix.env }}.log
+          echo "Logs with timestamps:"
+          cat logs/*
 
   process-outputs:
     name: Process Outputs
