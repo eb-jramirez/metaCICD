@@ -87,6 +87,11 @@ jobs:
         run: |
           for env in dev qat stg prd; do
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
+            
+            # Introduce a delay after deploying the "dev" environment
+            if [ "$env" == "dev" ]; then
+              sleep 10  # Adjust the delay time as needed (in seconds)
+            fi
           done
       
       - name: Append Timestamps to Logs
