@@ -86,13 +86,7 @@ jobs:
       - name: Get Deployment Timestamps
         run: |
           for env in dev qat stg prd; do
-            log_file="logs/deployment-$env.log"
-            if [ -f "$log_file" ]; then
-              echo "Deployment timestamps for $env:"
-              cat "$log_file"
-            else
-              echo "No deployment timestamps found for $env"
-            fi
+            echo "Deployment timestamp for $env: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> logs/deployment-$env.log
           done
 
 #      - name: Get Deployment Timestamps
