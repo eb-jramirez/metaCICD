@@ -100,7 +100,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: deployment-logs
-          path: logs 
+          path: deployment-${{ matrix.env }}.log 
 #  
 #  process-outputs:
 #    name: Process Outputs
