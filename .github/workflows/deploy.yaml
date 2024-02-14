@@ -95,6 +95,8 @@ jobs:
       - name: Get Deployment Timestamps
         run: |
           for env in dev qat stg prd; do
+            start_time=$(grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/logs/deployment-$env.log | head -n 1)
+            end_time=$(grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/logs/deployment-$env.log | tail -n 1)
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
             echo "Deployment start time for $env: $(grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/logs/deployment-$env.log | head -n 1)" >> logs/deployment-$env.log
             echo "Deployment end time for $env: $(grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/logs/deployment-$env.log | tail -n 1)" >> logs/deployment-$env.log
