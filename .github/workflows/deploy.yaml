@@ -23,7 +23,7 @@ jobs:
       max-parallel: 1
       fail-fast: true
       matrix:
-        env: [stg, dev, qat, prd]
+        env: [dev, qat, stg, prd]
         include:
           - name: dev
             cluster: dev-cluster
@@ -85,7 +85,7 @@ jobs:
 
       - name: Get Deployment Timestamps
         run: |
-          for env in stg dev qat prd; do
+          for env in dev qat stg prd; do
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
             
             # Introduce a delay after deploying the "dev" environment
