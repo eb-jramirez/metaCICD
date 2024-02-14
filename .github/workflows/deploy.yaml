@@ -92,7 +92,7 @@ jobs:
     steps:
       - name: Get Deployment Timestamps
         run: |
-          grep -oP "Deployment timestamp: \K.*" $GITHUB_WORKSPACE/deployment-${{ matrix.env }}.log | sort -n
+          grep -oP "Deployment timestamp: \K.*" $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log | sort -n
 
 #  generate-logs:
 #    name: Generate Timestamp Logs
