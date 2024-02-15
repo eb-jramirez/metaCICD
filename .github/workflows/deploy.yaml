@@ -81,7 +81,6 @@ jobs:
       - name: Record End Time
         id: end_time
         run: echo "::set-output name=end_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-        if: matrix.env == 'dev'  # Record end time only for the first environment (dev)
 
   generate-logs:
     name: Generate Timestamp Logs
