@@ -62,6 +62,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Record start time before deployment
       - name: Record Start Time
         id: start_time
         run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -78,6 +79,7 @@ jobs:
           echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
 
+      # Record end time after deployment
       - name: Record End Time
         id: end_time
         run: echo "::set-output name=end_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -94,6 +96,7 @@ jobs:
       - name: Get Deployment Timestamps
         run: |
           for env in dev qat stg prd; do
+            # Get start and end times
             start_time=$(grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/logs/deployment-$env.log | head -n 1)
             end_time=$(grep -oP 'Deployment timestamp: \K.*' $GITHUB_WORKSPACE/logs/deployment-$env.log | tail -n 1)
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
