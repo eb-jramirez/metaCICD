@@ -62,6 +62,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Record Start Time
+        id: start_time
+        run: |
+          start_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "Start Time: $start_time"
+          echo "::set-output name=start_time::$start_time"
+
       - name: Deploy Service
         run: |
           echo "Deploying service for environment ${{ matrix.env }}..."
@@ -76,23 +83,34 @@ jobs:
 
       - name: Record End Time
         id: end_time
-        run: echo "::set-output name=end_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-        if: matrix.env == 'dev'  # Record end time only for the first environment (dev)
+        run: |
+          end_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "End Time: $end_time"
+          echo "::set-output name=end_time::$end_time"
+
 
   generate-logs:
     name: Generate Timestamp Logs
-    needs: [deploy]
+    needs: [ deploy ]
     runs-on: ubuntu-latest
 
     steps:
       - name: Create Logs Directory
-        run: mkdir -p logs
+        run: mkdir -p $GITHUB_WORKSPACE/logs
 
       - name: Get Deployment Timestamps
         run: |
+          ls -l $GITHUB_WORKSPACE/logs # Debugging step: List files in the logs directory
           for env in dev qat stg prd; do
-            echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
-          
+            if [ -f "$GITHUB_WORKSPACE/logs/deployment-$env.log" ]; then
+              start_time=$(grep -oP 'Start Time: \K.*' $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log)
+              end_time=$(grep -oP 'End Time: \K.*' $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log)
+              echo "Deployment timestamp for $env: $(date -u)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+              echo "Deployment Start time for $env: $start_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+              echo "Deployment End time for $env: $end_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+            else
+              echo "Log file for $env not found"
+            fi
             # Adding delay after deploying the "dev" environment
             if [ "$env" == "dev" ]; then
               sleep 10  # Adjust the delay time as needed (in seconds)
@@ -102,14 +120,4 @@ jobs:
       - name: Display Timestamps in Logs
         run: |
           echo "Logs with timestamps:"
-          cat logs/*
-
-  process-outputs:
-    name: Process Outputs
-    needs: [deploy]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Get Deployment Timestamps
-        run: |
-          grep -oP "Deployment timestamp: \K.*" $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log | sort -n
+          cat $GITHUB_WORKSPACE/logs/*
