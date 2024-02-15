@@ -59,12 +59,12 @@ jobs:
             opensearch: opensearch/public/prd/masteruser
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Record Start Time
         id: start_time
         run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-
-      - name: Checkout code
-        uses: actions/checkout@v3
 
       - name: Deploy Service
         run: |
