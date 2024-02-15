@@ -71,13 +71,13 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          echo "Deployment timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+          deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "Deployment timestamp: $deployment_time"
+          echo "Deployment timestamp: $deployment_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
 
       - name: Record End Time
-        id: end_time
+        if: matrix.env == 'dev'
         run: echo "::set-output name=end_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-        if: matrix.env == 'dev'  # Record end time only for the first environment (dev)
 
   generate-logs:
     name: Generate Timestamp Logs
@@ -92,15 +92,9 @@ jobs:
         run: |
           for env in dev qat stg prd; do
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
-          
-            # Adding delay after deploying the "dev" environment
-#            if [ "$env" == "dev" ]; then
-#              sleep 10  # Adjust the delay time as needed (in seconds)
-#            fi
-#          done
+          done
 
       - name: Display Timestamps in Logs
         run: |
           echo "Logs with timestamps:"
           cat logs/*
-
