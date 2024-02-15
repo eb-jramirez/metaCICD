@@ -96,7 +96,7 @@ jobs:
       - name: Get Deployment Timestamps
         run: |
           for env in dev qat stg prd; do
-            # Get start and end times
+            # Get start and end times            
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
             echo "Deployment Start time for $env: $start_time" >> logs/deployment-$env.log
             echo "Deployment End time for $env: $end_time" >> logs/deployment-$env.log
