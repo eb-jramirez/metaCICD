@@ -64,8 +64,12 @@ jobs:
 
       - name: Record Start Time
         id: start_time
-        run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-
+        run: |
+          start_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "Start Time: $start_time"
+          echo "::set-output name=start_time::$start_time"
+      
+      
       - name: Deploy Service
         run: |
           echo "Deploying service for environment ${{ matrix.env }}..."
@@ -80,7 +84,11 @@ jobs:
 
       - name: Record End Time
         id: end_time
-        run: echo "::set-output name=end_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        run: |
+          end_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "End Time: $end_time"
+          echo "::set-output name=end_time::$end_time"
+
 
   generate-logs:
     name: Generate Timestamp Logs
