@@ -59,14 +59,12 @@ jobs:
             opensearch: opensearch/public/prd/masteruser
 
     steps:
+      - name: Record Start Time
+        run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        id: start_time
+
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Record Start Time
-        run: |
-          start_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          echo "Start Time for ${{ matrix.env }}: $start_time"
-          echo "::set-output name=start_time::$start_time"
 
       - name: Deploy Service
         run: |
@@ -77,14 +75,9 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-          deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)  # Capture deployment timestamp
+          deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           echo "Deployment timestamp: $deployment_time"
           echo "Deployment timestamp: $deployment_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
-
-      - name: Record End Time
-        id: end_time
-        run: echo "::set-output name=end_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-        if: matrix.env == 'dev'  # Record end time only for the first environment (dev)
 
   generate-logs:
     name: Generate Timestamp Logs
