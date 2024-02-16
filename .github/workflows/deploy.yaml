@@ -84,6 +84,7 @@ jobs:
           echo "Opensearch: ${{ matrix.opensearch }}"
           deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           echo "Deployment ZZtimestamp: $deployment_time"
+          echo "TimeStamp: ${{matrix.timestamp}}"
 
   generate-logs:
     name: Generate Timestamp Logs
