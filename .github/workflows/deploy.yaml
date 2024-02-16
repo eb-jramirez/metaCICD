@@ -83,7 +83,7 @@ jobs:
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
           deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          echo "Deployment timestamp: $deployment_time"
+          echo "Deployment ZZtimestamp: $deployment_time"
           echo "Deployment timestamp: $deployment_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
 
   generate-logs:
