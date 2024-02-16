@@ -99,8 +99,7 @@ jobs:
         run: |
           for env in dev qat stg prd; do
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
-            echo "Start Time for $env: ${{ needs.deploy.outputs.start_time }}" >> logs/deployment-$env.log
-            echo "Timestamp for $env: ${{ matrix[env].timestamp }}" >> logs/deployment-$env.log
+            echo "Deployment ZZtimestamp: $deployment_time"
           done
 
       - name: Display Timestamps in Logs
