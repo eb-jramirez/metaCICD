@@ -20,42 +20,8 @@ jobs:
     needs: [deploy-container]
 
     strategy:
+      max-parallel: 1
       fail-fast: true
-      matrix:
-        env: [dev, qat, stg, prd]
-        include:
-          - name: dev
-            cluster: dev-cluster
-            service: jobposting-processing
-            user: admin-DEV
-            kafka: kafka/dev/path
-            group: job-posting-dev
-            k_cluster: chamomile
-            opensearch: opensearch/public/dev/masteruser
-          - name: qat
-            cluster: qat-cluster
-            service: jobposting-processing
-            user: admin-QAT
-            kafka: kafka/qat/path
-            group: job-posting-qat
-            k_cluster: chamomile
-            opensearch: opensearch/public/qat/masteruser
-          - name: stg
-            cluster: stg-cluster
-            service: jobposting-processing
-            user: admin-STG
-            kafka: kafka/stg/path
-            group: job-posting-stg
-            k_cluster: hippos
-            opensearch: opensearch/public/stg/masteruser
-          - name: prd
-            cluster: prd-cluster
-            service: jobposting-processing
-            user: admin-PRD
-            kafka: kafka/prd/path
-            group: job-posting-prd
-            k_cluster: hippos
-            opensearch: opensearch/public/prd/masteruser
 
     steps:
       - name: Checkout code
