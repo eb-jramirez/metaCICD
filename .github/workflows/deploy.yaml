@@ -98,8 +98,7 @@ jobs:
       - name: Get Deployment Timestamps
         run: |
           for env in dev qat stg prd; do
-            echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
-            echo "Deployment ZZtimestamp: $deployment_time"
+            echo "Deployment ZZtimestamp for $env: $deployment_time" >> logs/deployment-$env.log
           done
 
       - name: Display Timestamps in Logs
