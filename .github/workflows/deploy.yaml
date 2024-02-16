@@ -33,6 +33,7 @@ jobs:
             group: job-posting-dev
             k_cluster: chamomile
             opensearch: opensearch/public/dev/masteruser
+            timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
           - name: qat
             cluster: qat-cluster
             service: jobposting-processing
@@ -41,6 +42,7 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
+            timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
           - name: stg
             cluster: stg-cluster
             service: jobposting-processing
@@ -49,6 +51,7 @@ jobs:
             group: job-posting-stg
             k_cluster: hippos
             opensearch: opensearch/public/stg/masteruser
+            timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
           - name: prd
             cluster: prd-cluster
             service: jobposting-processing
@@ -57,6 +60,7 @@ jobs:
             group: job-posting-prd
             k_cluster: hippos
             opensearch: opensearch/public/prd/masteruser
+            timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
 
     outputs:
       start_time: ${{ steps.set_start_time.outputs.start_time }}
@@ -85,7 +89,7 @@ jobs:
     name: Generate Timestamp Logs
     needs: [ deploy ]
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Create Logs Directory
         run: mkdir -p logs
@@ -94,9 +98,12 @@ jobs:
         run: |
           for env in dev qat stg prd; do
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
-            echo "Start Time for $env: ${{ needs.deploy.outputs.start_time }}" >> logs/deployment-$env.log
+            echo "Start Time for $env: ${{ needs.deploy.outputs['start_time_' . $env] }}" >> logs/deployment-$env.log
+            echo "Timestamp for $env: ${{ matrix[env].timestamp }}" >> logs/deployment-$env.log
           done
+
       - name: Display Timestamps in Logs
         run: |
           echo "Logs with timestamps:"
           cat logs/*
+  
