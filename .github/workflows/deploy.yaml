@@ -58,12 +58,15 @@ jobs:
             k_cluster: hippos
             opensearch: opensearch/public/prd/masteruser
 
+    outputs:
+      start_time: ${{ steps.set_start_time.outputs.start_time }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Record Start Time for ${{ matrix.env }}
-        id: start_time_${{ matrix.env }}
+      - name: Set Start Time
+        id: set_start_time
         run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
       - name: Deploy Service
@@ -78,12 +81,11 @@ jobs:
           deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           echo "Deployment timestamp: $deployment_time"
           echo "Deployment timestamp: $deployment_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
-  
   generate-logs:
     name: Generate Timestamp Logs
-    needs: [deploy]
+    needs: [ deploy ]
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Create Logs Directory
         run: mkdir -p logs
@@ -92,9 +94,8 @@ jobs:
         run: |
           for env in dev qat stg prd; do
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
-            echo "Start Time for $env: ${{ needs.deploy.outputs['start_time_' . $env] }}" >> logs/deployment-$env.log
+            echo "Start Time for $env: ${{ needs.deploy.outputs.start_time }}" >> logs/deployment-$env.log
           done
-
       - name: Display Timestamps in Logs
         run: |
           echo "Logs with timestamps:"
