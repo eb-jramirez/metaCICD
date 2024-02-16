@@ -74,22 +74,22 @@ jobs:
           deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           echo "Deployment timestamp: $deployment_time"
           
-  generate-logs:
-    name: Generate Timestamp Logs
-    needs: [ deploy ]
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Create Logs Directory
-        run: mkdir -p logs
-
-      - name: Get Deployment Timestamps
-        run: |
-          for env in dev qat stg prd; do
-            echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
-            echo "Start Time for $env: ${{ needs.deploy.outputs.start_time }}" >> logs/deployment-$env.log
-          done
-      - name: Display Timestamps in Logs
-        run: |
-          echo "Logs with timestamps:"
-          cat logs/*
+#  generate-logs:
+#    name: Generate Timestamp Logs
+#    needs: [ deploy ]
+#    runs-on: ubuntu-latest
+#    
+#    steps:
+#      - name: Create Logs Directory
+#        run: mkdir -p logs
+#
+#      - name: Get Deployment Timestamps
+#        run: |
+#          for env in dev qat stg prd; do
+#            echo "Deployment timestamp: $deployment_time" >> logs/deployment-$env.log
+#            echo "Start Time for $env: ${{ needs.deploy.outputs.start_time }}" >> logs/deployment-$env.log
+#          done
+#      - name: Display Timestamps in Logs
+#        run: |
+#          echo "Logs with timestamps:"
+#          cat logs/*
