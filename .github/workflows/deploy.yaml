@@ -85,6 +85,7 @@ jobs:
           deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           echo "Deployment timestamp: $deployment_time"
           echo "Deployment timestamp: $deployment_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
+
   generate-logs:
     name: Generate Timestamp Logs
     needs: [ deploy ]
@@ -98,7 +99,7 @@ jobs:
         run: |
           for env in dev qat stg prd; do
             echo "Deployment timestamp for $env: $(date -u)" >> logs/deployment-$env.log
-            echo "Start Time for $env: ${{ needs.deploy.outputs['start_time_' . $env] }}" >> logs/deployment-$env.log
+            echo "Start Time for $env: ${{ needs.deploy.outputs['start_time_' . env] }}" >> logs/deployment-$env.log
             echo "Timestamp for $env: ${{ matrix[env].timestamp }}" >> logs/deployment-$env.log
           done
 
@@ -106,4 +107,3 @@ jobs:
         run: |
           echo "Logs with timestamps:"
           cat logs/*
-  
