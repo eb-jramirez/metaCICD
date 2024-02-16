@@ -33,7 +33,6 @@ jobs:
             group: job-posting-dev
             k_cluster: chamomile
             opensearch: opensearch/public/dev/masteruser
-            timestamp: ${{ github.run_started }}
           - name: qat
             cluster: qat-cluster
             service: jobposting-processing
@@ -42,7 +41,6 @@ jobs:
             group: job-posting-qat
             k_cluster: chamomile
             opensearch: opensearch/public/qat/masteruser
-            timestamp: ${{ github.run_started }}
           - name: stg
             cluster: stg-cluster
             service: jobposting-processing
@@ -51,7 +49,6 @@ jobs:
             group: job-posting-stg
             k_cluster: hippos
             opensearch: opensearch/public/stg/masteruser
-            timestamp: ${{ github.run_started }}
           - name: prd
             cluster: prd-cluster
             service: jobposting-processing
@@ -60,17 +57,35 @@ jobs:
             group: job-posting-prd
             k_cluster: hippos
             opensearch: opensearch/public/prd/masteruser
-            timestamp: ${{ github.run_started }}
 
     outputs:
-      start_time: ${{ steps.set_start_time.outputs.start_time }}
+      start_time_dev: ${{ steps.set_start_time_dev.outputs.start_time }}
+      start_time_qat: ${{ steps.set_start_time_qat.outputs.start_time }}
+      start_time_stg: ${{ steps.set_start_time_stg.outputs.start_time }}
+      start_time_prd: ${{ steps.set_start_time_prd.outputs.start_time }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set Start Time
-        id: set_start_time
+      - name: Set Start Time (dev)
+        id: set_start_time_dev
+        if: matrix.env == 'dev'
+        run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+      - name: Set Start Time (qat)
+        id: set_start_time_qat
+        if: matrix.env == 'qat'
+        run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+      - name: Set Start Time (stg)
+        id: set_start_time_stg
+        if: matrix.env == 'stg'
+        run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+      - name: Set Start Time (prd)
+        id: set_start_time_prd
+        if: matrix.env == 'prd'
         run: echo "::set-output name=start_time::$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
       - name: Deploy Service
@@ -83,28 +98,31 @@ jobs:
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
           deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          echo "Deployment ZZtimestamp: $deployment_time"
-          echo "TimeStamp: ${{matrix.timestamp}}"
+          echo "Deployment timestamp: $deployment_time"
+          echo "Deployment timestamp: $deployment_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
 
   generate-logs:
     name: Generate Timestamp Logs
-    needs: [ deploy ]
+    needs: [deploy]
     runs-on: ubuntu-latest
 
     steps:
       - name: Create Logs Directory
         run: mkdir -p logs
 
-      - name: Get Deployment Timestamps
-        run: |
-          for env in dev qat stg prd; do
-            deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-            echo "Deployment timestamp for $env: $deployment_time" >> logs/deployment-$env.log
-          done
+      - name: Get Deployment Timestamps (dev)
+        run: echo "Deployment timestamp for dev: ${{ needs.deploy.outputs.start_time_dev }}" >> logs/deployment-dev.log
+
+      - name: Get Deployment Timestamps (qat)
+        run: echo "Deployment timestamp for qat: ${{ needs.deploy.outputs.start_time_qat }}" >> logs/deployment-qat.log
+
+      - name: Get Deployment Timestamps (stg)
+        run: echo "Deployment timestamp for stg: ${{ needs.deploy.outputs.start_time_stg }}" >> logs/deployment-stg.log
+
+      - name: Get Deployment Timestamps (prd)
+        run: echo "Deployment timestamp for prd: ${{ needs.deploy.outputs.start_time_prd }}" >> logs/deployment-prd.log
 
       - name: Display Timestamps in Logs
         run: |
           echo "Logs with timestamps:"
           cat logs/*
-  
-  
