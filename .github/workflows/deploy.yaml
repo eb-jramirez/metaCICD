@@ -63,10 +63,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Record Start Time
-        id: start_time
         run: |
           start_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          echo "Start Time: $start_time"
+          echo "Start Time for ${{ matrix.env }}: $start_time"
           echo "::set-output name=start_time::$start_time"
 
       - name: Deploy Service
@@ -78,7 +77,7 @@ jobs:
           echo "Group: ${{ matrix.group }}"
           echo "K Cluster: ${{ matrix.k_cluster }}"
           echo "Opensearch: ${{ matrix.opensearch }}"
-          deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          deployment_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)  # Capture deployment timestamp
           echo "Deployment timestamp: $deployment_time"
           echo "Deployment timestamp: $deployment_time" >> $GITHUB_WORKSPACE/logs/deployment-${{ matrix.env }}.log
 
